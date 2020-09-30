@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nicklaus.serviceedu.mapper.EduCourseMapper">
+    <select id="getPublishCourseInfo" parameterType="String" resultType="com.nicklaus.serviceedu.entity.vo.PublishCourseVO">
+        select
+            c.title,
+            c.cover,
+            c.lesson_num AS lessonNum,
+            CONVERT(c.price, DECIMAL(8,2)) AS price,
+            s1.title AS subjectLevelOne,
+            s2.title AS subjectLevelTwo,
+            t.name AS teacherName
+        from
+            edu_course as c
+                left join edu_teacher t on c.teacher_id = t.id
+                left join edu_subject s1 on c.subject_parent_id = s1.id
+                left join edu_subject s2 on c.subject_id = s2.id
+        where
+            c.id = #{courseId}
+    </select>
+
+    <select id="getCourseInfoByCourseId" parameterType="String" resultType="com.nicklaus.serviceedu.entity.vo.CourseWebVo">
+        select
+            c.id,
+            c.title,
+            CONVERT(c.price, DECIMAL(8,2)) AS price,
+            c.lesson_num AS lessonNum,
+            c.cover,
+            c.buy_count AS buyCount,
+            c.view_count AS viewCount,
+            ecd.description,
+            t.id AS teacherId,
+            t.name AS teacherName,
+            t.intro AS intro,
+            t.avatar,
+            s1.id AS subjectLevelOneId,
+            s1.title AS subjectLevelOne,
+            s2.id AS subjectLevelTwoId,
+            s2.title AS subjectLevelTwo
+        from
+            edu_course as c
+                left join edu_course_description ecd on c.id = ecd.id
+                left join edu_teacher t on c.teacher_id = t.id
+                left join edu_subject s1 on c.subject_parent_id = s1.id
+                left join edu_subject s2 on c.subject_id = s2.id
+        where
+            c.id = #{courseId}
+    </select>
+</mapper>
